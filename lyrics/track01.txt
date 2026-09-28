@@ -1,0 +1,4 @@
+window.TRACK_LYRICS = window.TRACK_LYRICS || {};
+window.TRACK_LYRICS["01"] = `
+
+`.trim();
