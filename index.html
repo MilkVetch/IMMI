@@ -230,32 +230,32 @@
       transition: color var(--transition-speed);
     }
 
-    /* 播放器容器 */
+    /* 修复版播放器容器：放宽至 52px，避免 iOS Safari 触摸失效 */
     .mini-player-box {
       width: 298px;
-      height: 32px;
-      border-radius: 6px;
+      height: 52px;
+      border-radius: 8px;
       overflow: hidden;
-      line-height: 0;
-      font-size: 0;
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .mini-player-box:hover {
-      background: rgba(255, 255, 255, 0.18);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.25);
     }
 
     .mini-player-box iframe {
       display: block;
-      margin-top: -10px;
+      border: none;
       opacity: 0.95;
-      transition: opacity 0.2s ease;
     }
 
     .lyrics-card {
@@ -311,6 +311,7 @@
       color: #fff;
     }
 
+    /* iPhone 移动端适配 */
     @media (max-width: 860px) {
       body {
         flex-direction: column;
@@ -355,6 +356,10 @@
       }
       .mini-player-box {
         margin: 0 auto;
+        width: 100% !important;
+        max-width: 298px;
+        height: 52px !important;
+        -webkit-transform: translateZ(0); /* 针对 iOS 强制开启硬件分层渲染 */
       }
       .bottom-bar {
         left: 50%;
@@ -420,7 +425,7 @@
     const mobileSelect = document.getElementById("mobileSelect");
     const mainContainer = document.getElementById("mainContainer");
 
-    // 全局常驻播放器实例：加入移动端媒体授权属性，解除浏览器沙盒限制
+    // 全局常驻播放器实例：宽高严格与真实尺寸匹配（298x52）
     const globalPlayer = document.createElement("iframe");
     globalPlayer.id = "shared-music-player";
     globalPlayer.setAttribute("frameborder", "no");
@@ -492,8 +497,8 @@
 
       const targetBox = document.getElementById(`player-box-${index}`);
       if (targetBox) {
-        // 关键改动：使用 auto=0，防止被手机端 Autoplay 策略判定违规而挂起报错
-        const newSrc = `https://music.163.com/outchain/player?type=2&id=${tracklist[index].songId}&auto=0&height=32`;
+        // height 改为 52，彻底匹配 iOS 渲染
+        const newSrc = `https://music.163.com/outchain/player?type=2&id=${tracklist[index].songId}&auto=0&height=52`;
         
         if (globalPlayer.src !== newSrc) {
           globalPlayer.src = newSrc;
